@@ -1,23 +1,31 @@
 {
-  "name": "react",
+  "name": "projet_s6",
   "version": "1.0.0",
-  "description": "React example starter project",
-  "keywords": ["react", "starter"],
-  "main": "src/index.js",
-  "dependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-scripts": "4.0.0"
-  },
-  "devDependencies": {
-    "@babel/runtime": "7.13.8",
-    "typescript": "4.1.3"
-  },
+  "description": "Projet du S6",
+  "main": "app.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuriy904/projet_s6.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yuriy904/projet_s6/issues"
+  },
+  "homepage": "https://github.com/yuriy904/projet_s6#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "mongodb": "^4.13.0",
+    "mongoose": "^6.9.1",
+    "node-fetch": "^3.3.0",
+    "promise": "^8.3.0",
+    "random-js": "^2.1.0",
+    "react-bootstrap": "^2.7.2"
+  }
 }

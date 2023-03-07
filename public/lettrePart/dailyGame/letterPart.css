@@ -1,0 +1,87 @@
+body,head{
+    margin:  0px;
+    background: #3EB3D8;
+}
+
+#app{
+    display:  flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#letterPart {
+    background-color: antiquewhite;
+    height: 100%;
+    width: 85%;
+    left: 36px;
+    top: 36px;
+    border-radius: 0px;
+    padding: 2em;
+    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+}
+
+.letterArea {
+    /* Letter case */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 100px;
+    gap: 10px;
+
+    font-size: 48px;
+    /* secondary color */
+
+    background: #FEBC03;
+    border: 2px solid #000000;
+}
+
+#guessPart{
+    width: 80%;
+    height: 40vh;
+    background-color: #FEBC03;
+
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    flex-direction: row;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}   
+
+div:has(input){
+    background-color: #28a487;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    margin:0.5em;
+}
+
+#guessButton{
+    width: 40px;
+}
+
+#guessPart > .rightPart {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1em;
+    padding: 1em;
+}
