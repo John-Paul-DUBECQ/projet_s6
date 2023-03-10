@@ -36,33 +36,17 @@ app.get('/search', function (req, res) {
   });
 });
 
-
-app.get('/searchIndex', function (req, res) {
-  MongoClient.connect(url, function (err, client) {
-    const db = client.db('dictionary');
-    const collection = db.collection('words');
-    // collection.aggregate([
-    //   { $match: { word: req.query.word } },
-    // ]).toArray(function (err, results) {
-    //   if (err) throw err;
-    //   res.send(results);
-    // });
-  });
-});
-
-
 function getRandomWordByDate(callback) {
-  const todayDate = new Date('05/05/2001')
-  const randomIndex = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259) % 336530;
-//  console.log(randomIndex);
+  const todayDate = new Date()
+  const randomIndex = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259) % 100169;
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
     const collection = db.collection('words');
     collection.find().skip(randomIndex).limit(1).toArray((err, result) => {
-        if (err) {
-          callback(err, null);
-        } else {
-          if(result[0].word.length >= 7 && result[0].word.length <= 10) { // vérifier la longueur du mot ici
+      if (err) {
+        callback(err, null);
+      } else {
+        if(result[0].word.length >= 7 && result[0].word.length <= 10) { // vérifier la longueur du mot ici
             callback(null, result[0].word);
           } else {
             getRandomWord(callback);

@@ -26,6 +26,8 @@
     "node-fetch": "^3.3.0",
     "promise": "^8.3.0",
     "random-js": "^2.1.0",
-    "react-bootstrap": "^2.7.2"
+    "react-bootstrap": "^2.7.2",
+    "remove-accents": "^0.4.4",
+    "seedrandom": "^3.0.5"
   }
 }

@@ -1,13 +1,4 @@
-
-function intToChar(int) {
-  // 👇️ for Uppercase letters, replace `a` with `A`
-  const code = 'a'.charCodeAt(0);
-  return String.fromCharCode(code + int);
-}
-
-function getRandomInt(min, max) {
-  return parseInt(Math.random() * (max - min) + min);
-}
+import {intToChar, getRandomInt, isWord, containsLetters} from './functions.js'
 
 function createArrayLetters() {
   return new Promise((resolve, reject) => {
@@ -33,7 +24,6 @@ function createArrayLetters() {
             array[j] = temp;
           }
         }
-        
         shuffleArray(letter)
         resolve(letter);
       },      
@@ -44,61 +34,15 @@ function createArrayLetters() {
   });
 }
 
-
-
-function isWord(text) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: '/search',
-      type: 'GET',
-      data: { word: text },
-      success: function (data) {
-        if (data[0] != null) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      },
-      error: function (e) {
-        reject(e);
-      }
-    });
-  });
-}
-
-function containsLetters(word, letters) {
-  const wordLetters = word.toLowerCase().split("");
-  const remainingLetters = [...letters];
-  for (const letter of wordLetters) {
-    const index = remainingLetters.indexOf(letter);
-    if (index === -1) {
-      return false;
-    }
-    remainingLetters.splice(index, 1);
-  }
-  return true;
-
-}
-
 class LetterArea extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      letters: []
+      letters: props.letters
     };
   }
 
-  componentDidMount() {
-    createArrayLetters().then((letters) => {
-      this.setState({letters});
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-
-
   render() {
-
     return (
       <div id="letterPart">
         {this.state.letters.map((elem) => (
@@ -107,10 +51,7 @@ class LetterArea extends React.Component {
       </div>
     )
   }  
-  
 }
-
-
 
 class GuessPart extends React.Component {
   constructor(props) {
@@ -129,12 +70,12 @@ class GuessPart extends React.Component {
   }
 
   handleAddWord(event) {
-    const { letters } = this.props; // access the letters prop
+    const { letters } = this.props;
 
     event.preventDefault();
     const word = this.state.inputText.trim();
     isWord(word).then( (result) => {
-      if (result && word !== '' && containsLetters(word, letters )) {
+      if (result && word !== '' && containsLetters(word, letters)) {
         this.setState((prevState) => ({ words: [word, ...prevState.words], inputText: '' }));
       } else {
         console.log('Mot invalide.');
@@ -172,65 +113,15 @@ class GuessPart extends React.Component {
     );
   }
 }
-
-class Decrementer extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.state = { n: props.start, timer: null }
-    this.timer = null
-    this.pause = this.pause.bind(this)
-    this.play = this.play.bind(this)
-  }
-
-  componentDidMount() {
-    this.play()
-  }
-
-  componentwillUnmount() {
-    this.pause()
-  }
-
-  increment() {
-    this.setState((state, props) => ({ n: parseInt(state.n) - 1 }))
-    if (this.state.n == 0) {
-      this.pause()
-    }
-
-  }
-
-  pause() {
-    window.clearInterval(this.state.timer)
-
-    this.setState({
-      timer: null
-    })
-  }
-
-  play() {
-    window.clearInterval(this.state.timer)
-    this.setState({
-      timer: window.setInterval(this.increment.bind(this), 1000)
-    })
-  }
-
-  render() {
-
-    return <div>
-      Valeur  {this.state.n}
-      {this.state.timer ?
-        <button onClick={this.pause}>Pause</button> :
-        <button onClick={this.play}>Lecture</button>}
-    </div>
-  }
-}
-
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      letters: []
+      score: 0,
+      isCooldownActive: false,
+      secondsLeft: 60
     };
+    this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
   }
 
   componentDidMount() {
@@ -239,13 +130,50 @@ class Game extends React.Component {
     }).catch((error) => {
       console.error(error);
     });
+    this.interval = setInterval(() => {
+      if (this.state.isCooldownActive) {
+        if (this.state.secondsLeft === 0) {
+          this.setState({ isCooldownActive: true});
+        } else {
+          this.setState((prevState) => ({ secondsLeft: prevState.secondsLeft - 1 }));
+        }
+      }
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  handlePlayButtonClick() {
+    this.setState({ isCooldownActive: true });
+  }
+
+  incrementScore (n) {
+    this.setState({ score: this.state.score + n });
   }
 
   render() {
+    const { isCooldownActive, secondsLeft } = this.state;
     return (
       <div>
-        <LetterArea letters={this.state.letters} />
-        <GuessPart letters={this.state.letters} />
+        {isCooldownActive ? (
+          <div className="game">
+            <p>{`Cooldown: ${secondsLeft}`}</p>
+            <LetterArea letters={this.state.letters} />
+            <GuessPart letters={this.state.letters} />
+          </div>
+        ) : (
+          <div>
+          <button className="play-button" onClick={this.handlePlayButtonClick}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+              <path fill="none" d="M0 0h24v24H0z" />
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+          
+        </div>
+        )}
       </div>
     );
   }

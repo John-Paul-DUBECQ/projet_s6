@@ -1,68 +1,4 @@
-// if (btn) {
-//     btn.addEventListener('click', () => {
-//         const text = inputText.value;
-//          isWord(text);
-//         inputText.value = null;
-//     });
-// }
-// import removeAccents from "remove-accents";
-
-function searchFromIndex () {
-  const todayDate = new Date()
-  const randomNumberFromDate = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259) % 336530;
-  console.log(randomNumberFromDate);
-}
-searchFromIndex()
-// console.log((testDate.getMonth() * testDate.getDate() * 445447 * testDate.getFullYear() * 1259) % 336530);
-const letters = new Array();
-
-
-function intToChar(int) {
-  // 👇️ for Uppercase letters, replace `a` with `A`
-  const code = 'a'.charCodeAt(0);
-  return String.fromCharCode(code + int);
-}
-
-function getRandomInt(min, max) {
-  return parseInt(Math.random() * (max - min) + min);
-}
-function createArrayLetters() {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: '/getRandomWordByDate',
-      type: 'GET',
-      dataType: 'json',
-      data: { minLength: 7 },
-      success: function (data) {
-        // 'data' contient le mot aléatoire récupéré depuis la base de données
-        const letter = [...data];
-        // Ajouter des lettres jusqu'à ce que la longueur de 'letters' soit égale à 10
-        while (letter.length < 10) {
-          const randomLetter = String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-          letter.push(randomLetter);
-        }
-        // Mettre à jour le state de l'application avec le nouveau mot et les lettres
-        const shuffleArray = array => {
-          for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-          }
-        }
-        
-        shuffleArray(letter)
-        resolve(letter);
-      },      
-      error: function (e) {
-        reject(e);
-      }
-    });
-  });
-}
-
 function isWord(text) {
-  console.log();
   return new Promise((resolve, reject) => {
     $.ajax({
       url: '/search',
@@ -87,55 +23,66 @@ function containsLetters(word, letters) {
   const remainingLetters = [...letters];
   for (const letter of wordLetters) {
     const index = remainingLetters.indexOf(letter);
-    console.log(letters);
-    console.log(remainingLetters.indexOf(letter));
     if (index === -1) {
       return false;
     }
     remainingLetters.splice(index, 1);
   }
   return true;
+}
 
+function createArrayLetters(dailyWord) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: '/getRandomWordByDate',
+      type: 'GET',
+      dataType: 'json',
+      data: { minLength: 7 },
+      success: function (data) {
+        dailyWord = data
+        // 'data' contient le mot aléatoire récupéré depuis la base de données
+        const letter = [...data];
+        // Ajouter des lettres jusqu'à ce que la longueur de 'letters' soit égale à 10
+        while (letter.length < 10) {
+          const randomLetter = String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+          letter.push(randomLetter);
+        }
+        // Mettre à jour le state de l'application avec le nouveau mot et les lettres
+        const shuffleArray = array => {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+          }
+        }
+        shuffleArray(letter)
+        resolve(letter);
+      },      
+      error: function (e) {
+        reject(e);
+      }
+    });
+  });
 }
 
 class LetterArea extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      letters: []
-    };
-  }
-
-  componentDidMount() {
-    createArrayLetters().then((letters) => {
-      this.setState({letters});
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-
-
   render() {
-
+    const { letters } = this.props;
     return (
       <div id="letterPart">
-        {this.state.letters.map((elem) => (
-          <div className="letterArea">{elem}</div>
-        ))}
+        {letters && letters.map((elem) => <div className="letterArea">{elem.toUpperCase()}</div>)}
       </div>
-    )
-  }  
-  
+    );
+  }
 }
-
 
 class GuessPart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       inputText: '',
-      words: [],
-      letters: []
+      words: []
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleAddWord = this.handleAddWord.bind(this);
@@ -147,14 +94,15 @@ class GuessPart extends React.Component {
   }
 
   handleAddWord(event) {
-    const {letters} = this.props
+    const {incrementScore, letters} = this.props
 
     event.preventDefault();
     const word = this.state.inputText.trim();
     isWord(word).then( (result) => {
-      if (result && word !== '' && containsLetters(word, letters)) {
+      console.log(result + word);
+      if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word)) {
         this.setState((prevState) => ({ words: [word, ...prevState.words], inputText: '' }));
-        this.props.incrementScore(word.length)
+        incrementScore(word.length)
       } else {
         console.log('Mot invalide.');
       }
@@ -166,14 +114,16 @@ class GuessPart extends React.Component {
     if (event.key === 'Enter') {
       this.handleAddWord(event);
       this.setState(() => ({  inputText: '' }));
-
     }
   }
 
   render() {
+    const { score } = this.props;
+
     const { inputText, words } = this.state;
     return (
       <div className="guess-part">
+          <h2>Score:  {score}</h2>
         <div className="guess-form">
           <form onSubmit={this.handleAddWord}>
             <input type="text" value={inputText} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
@@ -181,6 +131,7 @@ class GuessPart extends React.Component {
           </form>
         </div>
         <div className="guess-words">
+         
           <h2>Mots ajoutés :</h2>
           <ul>
             {words.map((word, index) => (
@@ -197,24 +148,26 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      letters: [],
+      dailyWord: "",
       score: 0,
       isCooldownActive: false,
-      secondsLeft: 60
+      secondsLeft: 10,
+      letters: null 
     };
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
   }
 
   componentDidMount() {
-    createArrayLetters().then((letters) => {
-      this.setState({ letters: letters });
+    createArrayLetters(this.state.dailyWord).then((newLetters) => {
+      this.setState({ letters: newLetters });
     }).catch((error) => {
       console.error(error);
     });
+
     this.interval = setInterval(() => {
       if (this.state.isCooldownActive) {
         if (this.state.secondsLeft === 0) {
-          this.setState({ isCooldownActive: false, secondsLeft: 60 });
+          this.setState({ isCooldownActive: true }); 
         } else {
           this.setState((prevState) => ({ secondsLeft: prevState.secondsLeft - 1 }));
         }
@@ -230,35 +183,55 @@ class Game extends React.Component {
     this.setState({ isCooldownActive: true });
   }
 
-  incrementScore (n) {
-    this.setState({ score: this.state.score + n });
+  returnToMenu () {
+    document.location.href='../lettrePartIndex.html'
+  }
+
+  incrementScore(n) {
+    this.setState((prevState) => ({ score: prevState.score + n }));
   }
 
   render() {
-    const { isCooldownActive, secondsLeft } = this.state;
+    const { isCooldownActive, secondsLeft, letters, score, dailyWord } = this.state; // destructure 'letters'
+
+    if (isCooldownActive && secondsLeft === 0) {
+      return (
+        <div>
+          <h1>Game Over!</h1>
+          <p>Your score is: {score}</p>
+          <p>The word was: {dailyWord}</p>
+        </div>
+      );
+    }
+
     return (
-      <div className="game">
+      <div>
         {isCooldownActive ? (
-          <div className="cooldown">
-            <p>{`Cooldown: ${secondsLeft}`}</p>
-            <LetterArea letters={this.state.letters} />
-            <GuessPart letters={this.state.letters} />
+          <div className="game">
+            <div className="topPart">
+              <div onClick={() => this.returnToMenu(this)}>
+                <button className="returnButton" ><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/></svg>
+                </button>
+              </div>
+              <p className="chrono">{secondsLeft}</p>
+            </div>
+              {letters && <LetterArea letters={letters} />} {/* pass down letters as props only when it is truthy */}
+            <GuessPart letters={letters} incrementScore={(n) => this.incrementScore(n)} score={this.state.score} />
           </div>
         ) : (
           <div>
-          <button className="play-button" onClick={this.handlePlayButtonClick}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
-              <path fill="none" d="M0 0h24v24H0z" />
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </button>
-          
-        </div>
+            <button className="play-button" onClick={this.handlePlayButtonClick}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
         )}
       </div>
     );
   }
-
 }
 
 ReactDOM.render(<Game />, document.querySelector('#app'))

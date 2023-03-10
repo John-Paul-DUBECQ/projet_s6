@@ -1,5 +1,10 @@
 body{
     background-color: rgb(12, 43, 70);
+}
+
+
+.blocks{
+    background-color: rgb(12, 43, 70);
     margin: 4vh 0 0 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -7,12 +12,42 @@ body{
     grid-gap: 4vh;
 }
 
-.block{
-    background-color: rgb(79, 79, 193);
+.block {
     height: 40vh;
     width: 40vh;
+    font-size: 1.5em;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
+    text-align: center;
+}
+
+.normalBlock{
+    background-color: rgb(79, 79, 193);
+    font-size: 30px;
+
+}
+
+.block:hover{
+    transform: translateY(1.5px);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.reverseBlock{
+    background-color: rgb(255, 255, 255);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 20px solid rgb(6, 6, 80);
+    margin: 10px;
+
+    color:  #480429;
+
+}
+
+a{
+    text-decoration: none; 
+    color: #000000;
 }
