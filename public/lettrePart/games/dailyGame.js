@@ -18,6 +18,24 @@ function isWord(text) {
   });
 }
 
+function addRecord(playerName, playerScore) {
+  $.ajax({
+    url: "/saveRecord",
+    type: "POST",
+    data: {
+      name: playerName,
+      score: playerScore,
+      date: new Date().toLocaleDateString()
+    },
+    success: function (response) {
+      console.log("Record saved successfully!");
+    },
+    error: function (error) {
+      console.error("Error saving record:", error);
+    }
+  });
+}
+
 function containsLetters(word, letters) {
   const wordLetters = word.toLowerCase().split("");
   const remainingLetters = [...letters];
@@ -31,7 +49,7 @@ function containsLetters(word, letters) {
   return true;
 }
 
-function createArrayLetters(dailyWord) {
+function createArrayLetters(dailyWord, updateDailyword) {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: '/getRandomWordByDate',
@@ -39,7 +57,7 @@ function createArrayLetters(dailyWord) {
       dataType: 'json',
       data: { minLength: 7 },
       success: function (data) {
-        dailyWord = data
+        updateDailyword(data)
         // 'data' contient le mot aléatoire récupéré depuis la base de données
         const letter = [...data];
         // Ajouter des lettres jusqu'à ce que la longueur de 'letters' soit égale à 10
@@ -58,7 +76,7 @@ function createArrayLetters(dailyWord) {
         }
         shuffleArray(letter)
         resolve(letter);
-      },      
+      },
       error: function (e) {
         reject(e);
       }
@@ -94,11 +112,11 @@ class GuessPart extends React.Component {
   }
 
   handleAddWord(event) {
-    const {incrementScore, letters} = this.props
+    const { incrementScore, letters } = this.props
 
     event.preventDefault();
     const word = this.state.inputText.trim();
-    isWord(word).then( (result) => {
+    isWord(word).then((result) => {
       console.log(result + word);
       if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word)) {
         this.setState((prevState) => ({ words: [word, ...prevState.words], inputText: '' }));
@@ -106,14 +124,13 @@ class GuessPart extends React.Component {
       } else {
         console.log('Mot invalide.');
       }
-      }
-    )
+    })
   }
 
   handleKeyPress(event) {
     if (event.key === 'Enter') {
       this.handleAddWord(event);
-      this.setState(() => ({  inputText: '' }));
+      this.setState(() => ({ inputText: '' }));
     }
   }
 
@@ -123,7 +140,7 @@ class GuessPart extends React.Component {
     const { inputText, words } = this.state;
     return (
       <div className="guess-part">
-          <h2>Score:  {score}</h2>
+        <h2>Score:  {score}</h2>
         <div className="guess-form">
           <form onSubmit={this.handleAddWord}>
             <input type="text" value={inputText} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
@@ -131,7 +148,7 @@ class GuessPart extends React.Component {
           </form>
         </div>
         <div className="guess-words">
-         
+
           <h2>Mots ajoutés :</h2>
           <ul>
             {words.map((word, index) => (
@@ -144,6 +161,79 @@ class GuessPart extends React.Component {
   }
 }
 
+class ReturnButton extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { returnToMenu } = this.props
+    return (
+      <div onClick={() => returnToMenu()}>
+        <button className="returnButton" ><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" /></svg>
+        </button>
+      </div>
+    )
+  }
+}
+
+class EndingScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputText: ""
+    }
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleAddWord = this.handleAddRecord.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+  }
+
+  handleInputChange(event) {
+    this.setState({ inputText: event.target.value });
+  }
+
+  handleAddRecord(event) {
+    const { score, returnToMenu } = this.props
+
+    event.preventDefault();
+    if (this.state.inputText != "") {
+      addRecord(this.state.inputText, score)
+      document.location.href = '../lettrePartIndex.html'
+    } else {
+      console.log("zone de texte vide");
+    }
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleAddWord(event);
+      this.setState(() => ({ inputText: '' }));
+    }
+  }
+
+  render() {
+    const { score, dailyWord, returnToMenu } = this.props
+
+    return (
+      <div>
+        <ReturnButton returnToMenu={() => returnToMenu()} />
+        <div className="endGameScreen">
+          <h1>Game Over!</h1>
+          <p>Ton score est de: {score}</p>
+          <p>Le mot du jour était: {dailyWord.toUpperCase()}</p>
+          Envoyez votre score:
+          <form onSubmit={this.handleAddWord}>
+            Pseudo:
+            <input type="text" value={this.state.inputText} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
+            <button type="submit">Envoyer</button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -151,14 +241,18 @@ class Game extends React.Component {
       dailyWord: "",
       score: 0,
       isCooldownActive: false,
-      secondsLeft: 10,
-      letters: null 
+      secondsLeft: 60,
+      letters: null,
+      isFound: false
     };
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
   }
 
   componentDidMount() {
-    createArrayLetters(this.state.dailyWord).then((newLetters) => {
+    createArrayLetters(this.state.dailyWord, (updatedDailyWord) => {
+      this.setState({ dailyWord: updatedDailyWord, isFound: true });
+
+    }).then((newLetters) => {
       this.setState({ letters: newLetters });
     }).catch((error) => {
       console.error(error);
@@ -167,7 +261,7 @@ class Game extends React.Component {
     this.interval = setInterval(() => {
       if (this.state.isCooldownActive) {
         if (this.state.secondsLeft === 0) {
-          this.setState({ isCooldownActive: true }); 
+          this.setState({ isCooldownActive: true });
         } else {
           this.setState((prevState) => ({ secondsLeft: prevState.secondsLeft - 1 }));
         }
@@ -180,11 +274,14 @@ class Game extends React.Component {
   }
 
   handlePlayButtonClick() {
-    this.setState({ isCooldownActive: true });
+    //on active le cooldown quand on a déjà trouvé le mot
+    if (this.state.isFound) {
+      this.setState({ isCooldownActive: true });
+    }
   }
 
-  returnToMenu () {
-    document.location.href='../lettrePartIndex.html'
+  returnToMenu() {
+    document.location.href = '../lettrePartIndex.html'
   }
 
   incrementScore(n) {
@@ -192,35 +289,34 @@ class Game extends React.Component {
   }
 
   render() {
-    const { isCooldownActive, secondsLeft, letters, score, dailyWord } = this.state; // destructure 'letters'
+    const { isCooldownActive, secondsLeft, letters, score, dailyWord, isFound } = this.state;
 
+    //le timer est fini
     if (isCooldownActive && secondsLeft === 0) {
       return (
-        <div>
-          <h1>Game Over!</h1>
-          <p>Your score is: {score}</p>
-          <p>The word was: {dailyWord}</p>
-        </div>
+        <EndingScreen score={score} dailyWord={dailyWord} returnToMenu={() => this.returnToMenu()} />
       );
     }
 
-    return (
-      <div>
-        {isCooldownActive ? (
-          <div className="game">
-            <div className="topPart">
-              <div onClick={() => this.returnToMenu(this)}>
-                <button className="returnButton" ><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/></svg>
-                </button>
-              </div>
-              <p className="chrono">{secondsLeft}</p>
-            </div>
-              {letters && <LetterArea letters={letters} />} {/* pass down letters as props only when it is truthy */}
-            <GuessPart letters={letters} incrementScore={(n) => this.incrementScore(n)} score={this.state.score} />
+    //jeu en cours
+    
+    if (isCooldownActive) {
+      return(
+        <div className="game">
+          <div className="topPart">
+            <ReturnButton returnToMenu={() => this.returnToMenu()}/>
+            <p className="chrono">{secondsLeft}</p>
           </div>
-        ) : (
-          <div>
+          {letters && <LetterArea letters={letters} />} 
+          <GuessPart letters={letters} incrementScore={(n) => this.incrementScore(n)} score={this.state.score} />
+        </div>
+      )
+    } else {
+      if (isFound) {
+        return (
+          /*Le jeu n'a pas encore commencé*/
+          <div className="chargementScreen">
+            <ReturnButton returnToMenu={() => this.returnToMenu()}/>
             <button className="play-button" onClick={this.handlePlayButtonClick}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
                 <path fill="none" d="M0 0h24v24H0z" />
@@ -228,9 +324,16 @@ class Game extends React.Component {
               </svg>
             </button>
           </div>
-        )}
-      </div>
-    );
+        )
+      } else {
+        return ( 
+          <div className="chargementScreen">
+            <ReturnButton returnToMenu={() => this.returnToMenu()}/>
+            Chargement ...
+          </div>
+        )
+      }
+    } 
   }
 }
 

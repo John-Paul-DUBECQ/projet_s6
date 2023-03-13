@@ -46,17 +46,15 @@ function getRandomWordByDate(callback) {
       if (err) {
         callback(err, null);
       } else {
-        if(result[0].word.length >= 7 && result[0].word.length <= 10) { // vérifier la longueur du mot ici
-            callback(null, result[0].word);
-          } else {
-            getRandomWord(callback);
-          }
+        if (result[0].word.length >= 7) { // vérifier la longueur du mot ici
+          callback(null, result[0].word);
+        } else {
+          getRandomWord(callback);
+        }
       }
     });
   });
 };
-
-
 
 app.get('/getRandomWordByDate', (req, res) => {
   getRandomWordByDate((err, word) => {
@@ -71,8 +69,6 @@ app.get('/getRandomWordByDate', (req, res) => {
 });
 
 
-
-
 const wordsNumber = 336530;
 
 function getRandomWord(callback) {
@@ -84,16 +80,15 @@ function getRandomWord(callback) {
         if (err) {
           callback(err, null);
         } else {
-          if(result[0].word.length >= 7 && result[0].word.length <= 10) { // vérifier la longueur du mot ici
+          if (result[0].word.length >= 7 && result[0].word.length <= 10) { // vérifier la longueur du mot ici
             callback(null, result[0].word);
           } else {
             getRandomWord(callback);
           }
-      }
-    });
+        }
+      });
   });
 }
-
 
 app.get('/getRandomWord', (req, res) => {
   getRandomWord((err, word) => {
@@ -107,3 +102,68 @@ app.get('/getRandomWord', (req, res) => {
   });
 });
 
+
+app.get('/search', function (req, res) {
+  MongoClient.connect(url, function (err, client) {
+    const db = client.db('dictionary');
+    const collection = db.collection('words');
+    collection.aggregate([
+      { $match: { word: req.query.word } },
+    ]).toArray(function (err, results) {
+      if (err) throw err;
+      res.send(results);
+    });
+  });
+});
+
+app.post("/saveRecord", function(req, res) {
+  const record = {
+    name: req.body.name,
+    score: req.body.score,
+    date: new Date()
+  };
+  MongoClient.connect(url, function (err, client) {
+    const db = client.db('dictionary');
+    db.collection("records").insertOne(record, function(err, result) {
+      if (err) {
+        console.error("Error saving record:", err);
+        res.status(500).send("Error saving record");
+      } else {
+        console.log("Record saved successfully:", result);
+        res.send("Record saved successfully");
+      }
+    });
+  });
+});
+app.get('/getTopPlayersOfDay', (req, res) => {
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const nextDay = new Date(todayDate);
+  nextDay.setDate(todayDate.getDate() + 1);
+  MongoClient.connect(url, function (err, client) {
+    const db = client.db('dictionary');
+    const collection = db.collection('records');
+    collection.aggregate([
+      {
+        $match: {
+          date: { $gte: todayDate, $lt: nextDay }
+        }
+      },
+      {
+        $sort: {
+          score: -1
+        }
+      },
+      {
+        $limit: 10
+      }
+    ]).toArray(function (err, result) {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+      } else {
+        res.json(result);
+      }
+    });
+  });
+});
