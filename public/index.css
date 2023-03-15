@@ -28,10 +28,10 @@ body{
     cursor: pointer;
   }
   
-  #topPart {
+  .topPart {
     background-color: rgb(349, 12, 23);
   }
   
-  #bottomPart {
+  .bottomPart {
     background-color: rgb(01, 145, 350);
   }
