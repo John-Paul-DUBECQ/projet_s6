@@ -1,11 +1,11 @@
-function getTopPlayers(text) {
+function getTopPlayers() {
     return new Promise((resolve, reject) => {
       $.ajax({
         url: '/getTopPlayersOfDay',
         type: 'GET',
         success: function (data) {
           if (data[0] != null) {
-            resolve(true);
+            resolve(data);
           } else {
             resolve(false);
           }
@@ -57,20 +57,28 @@ class Block4 extends React.Component {
     }
 
     componentDidMount() {
-        getTopPlayers().then((result) => {
-          this.setState({results:result})
-        })
+        getTopPlayers().then((newResults) => {
+            this.setState({ results: newResults });
+          }).catch((error) => {
+            console.error(error);
+          });
     }
 
     render () {
         const { results } = this.state;
-        console.log(results);
+
         return (
-            <div className="block">
-                cx xc cxvw
-                {/* {word.map((word, index) => (
-                    <li key={index}>{word}</li>
-                ))} */}
+            <div className="block blockTop">
+                <div className="ligne firstline"> <div>Pseudo</div> <div>Score</div></div>
+                <div className="ligne firstline"> <div> </div> <div> </div></div>
+                {results ? (
+                        results.map((result) => (
+                            <div className="ligne"> 
+                                <div>{result.name} </div>
+                                <div>{result.score}</div>  
+                            </div>
+                        ))) : <div>En attente du top...</div>
+                }
             </div>
         )
     }

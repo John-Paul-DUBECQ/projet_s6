@@ -1,0 +1,30 @@
+
+.topPart{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chrono{
+    font-size: 30px;
+    background-color: rgb(0, 0, 0);
+    border-radius: 100%;
+    color: hsl(166, 52%, 54%);
+    border: hsl(166, 52%, 54%) solid;
+    height: 85px;
+    width: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.endGameScreen{
+    font-size: 2em;
+}
+
+.operationList{
+    display: flex;
+    flex-direction: row;
+}

@@ -2,7 +2,6 @@ body{
     background-color: rgb(12, 43, 70);
 }
 
-
 .blocks{
     background-color: rgb(12, 43, 70);
     margin: 4vh 0 0 0;
@@ -50,4 +49,52 @@ body{
 a{
     text-decoration: none; 
     color: #000000;
+}
+
+.blockTop {
+    background-color: #0000002a;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: 1em;
+}
+
+.ligne {
+    width: 100%;
+    min-height: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-top: #000000 solid 2px ;
+    color: rgba(250, 235, 215, 0.818);
+
+}
+
+.ligne > div {
+    width: 50%;
+}
+
+.firstline{    
+    min-height: 33px;
+
+    color: antiquewhite;
+
+    font-weight: bolder;
+    border:none;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }

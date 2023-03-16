@@ -102,13 +102,13 @@ class GuessPart extends React.Component {
       inputText: '',
       words: []
     };
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleAddWord = this.handleAddWord.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleAddWord = this.handleAddWord.bind(this)
+    this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
   handleInputChange(event) {
-    this.setState({ inputText: event.target.value });
+    this.setState({ inputText: event.target.value })
   }
 
   handleAddWord(event) {
@@ -117,7 +117,6 @@ class GuessPart extends React.Component {
     event.preventDefault();
     const word = this.state.inputText.trim();
     isWord(word).then((result) => {
-      console.log(result + word);
       if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word)) {
         this.setState((prevState) => ({ words: [word, ...prevState.words], inputText: '' }));
         incrementScore(word.length)
@@ -141,12 +140,10 @@ class GuessPart extends React.Component {
     return (
       <div className="guess-part">
         <h2>Score:  {score}</h2>
-        <div className="guess-form">
-          <form onSubmit={this.handleAddWord}>
-            <input type="text" value={inputText} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
-            <button type="submit">Ajouter</button>
-          </form>
-        </div>
+        <form onSubmit={this.handleAddWord} className="guess-form">
+          <input type="text" value={inputText} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
+          <button type="submit">Ajouter</button>
+        </form>
         <div className="guess-words">
 
           <h2>Mots ajoutés :</h2>
