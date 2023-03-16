@@ -2,6 +2,11 @@ body{
     background-color: rgb(12, 43, 70);
 }
 
+#app{
+    overflow-x: hidden;
+
+}
+
 .blocks{
     background-color: rgb(12, 43, 70);
     margin: 4vh 0 0 0;
@@ -30,7 +35,6 @@ body{
 }
 
 .block:hover{
-    transform: translateY(1.5px);
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 

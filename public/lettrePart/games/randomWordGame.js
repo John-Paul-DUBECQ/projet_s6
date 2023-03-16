@@ -30,6 +30,7 @@ function containsLetters(word, letters) {
   }
   return true;
 }
+
 function createArrayLetters(updateRandomWord) {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -200,7 +201,6 @@ class EndingScreen extends React.Component {
           <h1>Game Over!</h1>
           <p>Ton score est de: {score}</p>
           <p>Le mot aléatoire était: {randomWord.toUpperCase()}</p>
-          Envoyez votre score:
         </div>
       </div>
     )
@@ -224,7 +224,6 @@ class Game extends React.Component {
   componentDidMount() {
     createArrayLetters((updateRandomWord) => {
       this.setState({ randomWord: updateRandomWord, isFound: true });
-
     }).then((newLetters) => {
       this.setState({ letters: newLetters });
     }).catch((error) => {

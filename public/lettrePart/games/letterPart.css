@@ -1,10 +1,8 @@
 body,head{
     margin: 0px;
     background: #16637a;
-    
+    overflow-x: hidden;
 }
-
-
 
 #app{
     margin: 0px;
@@ -30,7 +28,6 @@ body{
 #letterPart {
     background-color: rgba(250, 235, 215, 0.34);
     height: 100%;
-    width: 85%;
     left: 36px;
     top: 36px;
     border-radius: 0px;
@@ -123,15 +120,30 @@ body{
 }
 
 .endGameScreen{
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
-@media only screen and (min-width: 1250px) {
+@media only screen and (min-width: 1500px) {
 
     body{
         font-size: 2em;
     }
     
+    #letterPart {
+        background-color: rgba(250, 235, 215, 0.34);
+        height: 100%;
+        left: 36px;
+        top: 36px;
+        border-radius: 0px;
+        padding: 2em;
+        
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+
     .letterArea {
         /* Letter case */
 
@@ -153,6 +165,10 @@ body{
         background: #FEBC03;
         border: 2px solid #000000;
     }
+
+    .endGameScreen{
+        font-size: 2em;
+    }
 }
 
 .chargementScreen {
@@ -169,17 +185,18 @@ body{
 
 .guess-form {
     display: flex;
+    align-items: center;
     flex-direction: row;
-    gap: 2em;
 }
 
-.guess-form > input {
+form > input {
     height: 3em;
     width: 22em;
     font-weight: 24px;
+    margin: 2em;
 }
 
-.guess-form > button{
+form > button{
     height: 3em;
     font-weight: bold;
 }
