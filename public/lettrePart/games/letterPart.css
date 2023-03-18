@@ -4,6 +4,10 @@ body,head{
     overflow-x: hidden;
 }
 
+input[type="text"]{
+    font-size:30px;
+}
+
 #app{
     margin: 0px;
     width: 100vw;

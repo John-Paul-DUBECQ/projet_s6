@@ -1,3 +1,4 @@
+//retourne le top 10 des joueurs
 function getTopPlayers() {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -17,7 +18,6 @@ function getTopPlayers() {
     });
 }
 
-
 class ReturnButton extends React.Component {
     constructor(props) {
         super(props);
@@ -26,9 +26,8 @@ class ReturnButton extends React.Component {
     returnToMenu() {
         document.location.href = '../index.html'
     }
-    
+
     render() {
-        
         return (
             <div onClick={() => this.returnToMenu()}>
                 <button className="returnButton" ><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -38,7 +37,7 @@ class ReturnButton extends React.Component {
         )
     }
 }
-
+//block pour le random letter
 class Block1 extends React.Component {
     constructor(props) {
         super(props);
@@ -69,7 +68,7 @@ class Block1 extends React.Component {
         )
     }
 }
-
+//block pour le daily word
 class Block2 extends React.Component {
     constructor(props) {
         super(props);
@@ -100,7 +99,7 @@ class Block2 extends React.Component {
         )
     }
 }
-
+//block pour le random word
 class Block3 extends React.Component {
     constructor(props) {
         super(props);
@@ -131,7 +130,7 @@ class Block3 extends React.Component {
         )
     }
 }
-
+//block pour le top 10
 class Block4 extends React.Component {
     constructor(props) {
         super(props);
@@ -179,8 +178,6 @@ class Block4 extends React.Component {
     }
 }
 
-
-
 class Menu extends React.Component {
     constructor(props) {
         super(props);
@@ -189,13 +186,13 @@ class Menu extends React.Component {
     render() {
         return (
             <div>
-            <ReturnButton />
-            <div className="blocks">
-                <Block1 />
-                <Block2 />
-                <Block3 />
-                <Block4 />
-            </div>
+                <ReturnButton />
+                <div className="blocks">
+                    <Block1 />
+                    <Block2 />
+                    <Block3 />
+                    <Block4 />
+                </div>
             </div>
         )
     }

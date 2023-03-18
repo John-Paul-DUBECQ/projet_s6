@@ -1,7 +1,7 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb://upjv2023:4JMiQkAQp0QCsTXT@ac-z5vtdb2-shard-00-00.twdmswi.mongodb.net:27017,ac-z5vtdb2-shard-00-01.twdmswi.mongodb.net:27017,ac-z5vtdb2-shard-00-02.twdmswi.mongodb.net:27017/?ssl=true&replicaSet=atlas-20zwsr-shard-0&authSource=admin&retryWrites=true&w=majority"
-
+require('dotenv').config();
+const url = process.env.MONGO_URI
 
 const app = express();
 app.use(express.static('./public'));
@@ -13,16 +13,7 @@ app.listen('8080');
 
 
 app.use(express.urlencoded({ extended: true }));
-app.get('/mongodb-data', function (req, res) {
-  MongoClient.connect(url, function (err, client) {
-    const db = client.db('dictionary');
-    const collection = db.collection('words');
-    collection.find({}).toArray(function (err, documents) {
-      res.send(documents);
-    });
-  });
-});
-
+//savoir si un mot est dans le dico
 app.get('/search', function (req, res) {
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
@@ -36,9 +27,10 @@ app.get('/search', function (req, res) {
   });
 });
 
+//le number permet de prendre un nombre différent si il est trop petit ou trop grand et que ce soit tjrs le même
 function getRandomWordByDate(callback, number) {
   const todayDate = new Date()
-  const randomIndex = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259 * number) % 100169;
+  const randomIndex = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259 * number) % 100169;//nombre suffisamment aléatoire
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
     const collection = db.collection('words');
@@ -57,6 +49,7 @@ function getRandomWordByDate(callback, number) {
   });
 };
 
+//génère un mot aléatoire basé sur une date
 app.get('/getRandomWordByDate', (req, res) => {
   getRandomWordByDate((err, word) => {
     if (err) {
@@ -68,9 +61,8 @@ app.get('/getRandomWordByDate', (req, res) => {
   }, 1);
 });
 
-
-const wordsNumber = 336530;
-
+const wordsNumber = 336530;//nbr de mots au total
+//renvoie un mot aléatoire
 function getRandomWord(callback) {
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
@@ -101,20 +93,7 @@ app.get('/getRandomWord', (req, res) => {
   });
 });
 
-
-app.get('/search', function (req, res) {
-  MongoClient.connect(url, function (err, client) {
-    const db = client.db('dictionary');
-    const collection = db.collection('words');
-    collection.aggregate([
-      { $match: { word: req.query.word } },
-    ]).toArray(function (err, results) {
-      if (err) throw err;
-      res.send(results);
-    });
-  });
-});
-
+//enregistrer un score
 app.post("/saveRecord", function(req, res) {
   const record = {
     name: req.body.name,
@@ -134,11 +113,12 @@ app.post("/saveRecord", function(req, res) {
     });
   });
 });
+//récupérer le top 10
 app.get('/getTopPlayersOfDay', (req, res) => {
   const todayDate = new Date();
   todayDate.setHours(0, 0, 0, 0);
   const nextDay = new Date(todayDate);
-  nextDay.setDate(todayDate.getDate() + 1);
+  nextDay.setDate(todayDate.getDate() + 1);//entre aujourd'hui et demain
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
     const collection = db.collection('records');

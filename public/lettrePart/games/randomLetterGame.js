@@ -1,5 +1,4 @@
 function intToChar(int) {
-    // 👇️ for Uppercase letters, replace `a` with `A`
     const code = 'a'.charCodeAt(0);
     return String.fromCharCode(code + int);
 }
@@ -7,7 +6,7 @@ function intToChar(int) {
 function getRandomInt(min, max) {
     return parseInt(Math.random() * (max - min) + min);
 }
-
+//on vérifie si le mot existe
 function isWord(text) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -27,7 +26,7 @@ function isWord(text) {
         });
     });
 }
-
+//savoir si le mot proposé contient toutes les lettres présentes
 function containsLetters(word, letters) {
     const wordLetters = word.toLowerCase().split("");
     const remainingLetters = [...letters];
@@ -40,9 +39,8 @@ function containsLetters(word, letters) {
     }
     return true;
 }
-
-function createArrayLetters() {
-    var letters = new Array()
+//on crée le tableau de lettre
+function createArrayLetters(updateRandomWord) {
     return new Promise((resolve, reject) => {
         var quota = 0
 
@@ -59,6 +57,7 @@ function createArrayLetters() {
         for (let index = 0; index < 8; index++) {
             const c = getRandomInt(0, 26)
             const cha = intToChar(c)
+            //on enlève les lettres les moins utilisées
             if (cha === 'x' || cha === 'z' || cha === 'w' || cha === 'k' || cha === 'y') {
                 const c = getRandomInt(0, 100)
                 if (c > 80) {
@@ -74,7 +73,7 @@ function createArrayLetters() {
     }
     )
 }
-
+//partie avec toutes les lettres
 class LetterArea extends React.Component {
     render() {
         const { letters } = this.props;
@@ -85,7 +84,7 @@ class LetterArea extends React.Component {
         );
     }
 }
-
+//partie centrale
 class GuessPart extends React.Component {
     constructor(props) {
         super(props);
@@ -101,7 +100,7 @@ class GuessPart extends React.Component {
     handleInputChange(event) {
         this.setState({ inputText: event.target.value })
     }
-
+    //méthode quand on essaye d'ajouter un mot
     handleAddWord(event) {
         const { incrementScore, letters } = this.props
 
@@ -182,7 +181,7 @@ class EndingScreen extends React.Component {
     }
 
     handleAddRecord(event) {
-        const { score, returnToMenu } = this.props
+        const { score } = this.props
 
         event.preventDefault();
         if (this.state.inputText != "") {
@@ -220,22 +219,22 @@ class Game extends React.Component {
         super(props);
         this.state = {
             score: 0,
-            isCooldownActive: false,
+            isCooldownActive: false,//on change quand on acive le cooldown
             secondsLeft: 60,
-            letters: null,
-            isFound: false
+            letters: null,//liste des lettres
+            isFound: false//avons-nous trouvé le mot dans la db
         };
         this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     }
 
     componentDidMount() {
+            //on crée le tableau de lettres
         createArrayLetters().then((newLetters) => {
-            console.log(newLetters);
             this.setState({ letters: newLetters, isFound: true });
         }).catch((error) => {
             console.error(error);
         });
-
+        //on lance le compteur
         this.interval = setInterval(() => {
             if (this.state.isCooldownActive) {
                 if (this.state.secondsLeft === 0) {
@@ -277,7 +276,6 @@ class Game extends React.Component {
         }
 
         //jeu en cours
-
         if (isCooldownActive) {
             return (
                 <div className="game">
@@ -304,6 +302,7 @@ class Game extends React.Component {
                     </div>
                 )
             } else {
+                /*Le mot charge*/
                 return (
                     <div className="chargementScreen">
                         <ReturnButton returnToMenu={() => this.returnToMenu()} />
