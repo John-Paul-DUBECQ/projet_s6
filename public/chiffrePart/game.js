@@ -4,12 +4,17 @@ let operations = new Array();
 function generateNumberGame() {
   return new Promise((resolve, reject) => {
     // Generate six random numbers between 1 and 100
-    const numbers = Array.from({ length: 6 }, () => Math.floor(Math.random() * 25) + 1);
+    const numbers = new Array();
+    while (numbers.length < 6) {
+      const number = Math.floor(Math.random() * 25) + 1;
+      if (!numbers.includes(number)) {
+        numbers.push(number);
+      }
+    }
+    
     console.log("The numbers are:", numbers);
 
     const result = calculateResult(numbers)
-    console.log("result is:" + result);
-    console.log("operations are:" + operations);
     var results = new Array();
     results['numberToFind'] = result;
     results['operations'] = operations;
@@ -25,39 +30,42 @@ function calculateResult(numbers) {
   const shuffled = numbers.sort(() => Math.random() - 0.5);
   const count = Math.floor(Math.random() * 4) + 3;
   const selected = shuffled.slice(0, count);
-  console.log("selected are  " + selected);
 
   // perform random mathematical operations until result is greater than 150
   let result = selected[0];
   operations.push(selected[0])
   for (let i = 1; i < selected.length; i++) {
-    console.log("temporary result is " + result);
     const operator = ['+', '-', '*'][Math.floor(Math.random() * 4)];
     switch (operator) {
       case '+':
         result += selected[i];
-        operations.push("+")
-        operations.push(selected[i])
+        operations.push(" + ")
+        operations.push(selected[i] )
         break;
       case '-':
         result -= selected[i];
-        operations.push("-")
+        operations.push(" - ")
         operations.push(selected[i])
         break;
       case '*':
+        operations.unshift("(")
         result *= selected[i];
-        operations.push("*")
-        operations.push(selected[i])
+        operations.push(" ) " + " * ")
+        operations.push(selected[i] )
         break;
     }
-    if (result > 150) {
-      return result;
-    } 
   }
-  
-  if (result < 150 || result === null) {
+
+  if (result < 150 || result > 899 || result === null) {
     return calculateResult(numbers)
   }
+
+  if (result > 150) {
+    console.log(operations);
+    console.log(result);
+    return result;
+  } 
+  
   // if result is still not greater than 150, recurse with remaining numbers
   if (selected.length < numbers.length) {
     const remaining = numbers.filter(num => !selected.includes(num));
@@ -98,14 +106,14 @@ class EndingScreen extends React.Component {
   }
 
   render() {
-    const { isFound, numberToFind, returnToMenu , operations} = this.props
+    const { isWin, numberToFind, returnToMenu , operations} = this.props
 
     return (
       <div>
         <ReturnButton returnToMenu={() => returnToMenu()} />
         <div className="endGameScreen">
           <h1>Game Over!</h1>
-          {isFound ?
+          {isWin ?
             <p>Tu as réussi à trouver le nombre: Bravo</p> :
             <p>Tu n'as malheureusement pas trouvé le nombre, dommage, tu feras mieux la prochaine fois</p> 
           }
@@ -114,12 +122,207 @@ class EndingScreen extends React.Component {
           <p>Pour y arriver, il fallait faire:</p>
           <div className="operationList">
             {
-              operations.map((elem) => <p>({elem.toString()})</p>)
+              operations.map((elem) => <p>{elem.toString()}</p>)
             }
           </div>
         </div>
       </div>
     )
+  }
+}
+
+class PlayPart extends React.Component {
+  constructor(props) {
+    super(props);
+    const { numbers } = this.props;
+    this.state = {
+      numbers: [
+        { value: numbers[0], column: null },
+        { value: numbers[1], column: null },
+        { value: numbers[2], column: null },
+        { value: numbers[3], column: null },
+        { value: numbers[4], column: null },
+        { value: numbers[5], column: null }
+      ],
+      operatorSelected: null,
+      operators:  [
+         "+" ,
+         "-",
+         "*" 
+      ],
+      selectedNumberA: null,
+      selectedNumberB: null
+    }
+    this.handleSendClick = this.handleSendClick.bind(this);
+    this.handleResetClick = this.handleResetClick.bind(this);
+  }
+
+  // Function to handle sending the calculation
+  handleSendClick() {
+    const { numberToFind, endingGame } = this.props;
+
+    const { selectedNumberA,selectedNumberB, operatorSelected, numbers} = this.state;
+    if (selectedNumberA && selectedNumberB && operatorSelected != null) {
+      const a = selectedNumberA.value
+      const b = selectedNumberB.value
+      let result;
+      switch (operatorSelected) {
+        case "+":
+          result = a + b;
+          break;
+        case "-":
+          result = a - b;
+          break;
+        case "*":
+          result = a * b;
+          break;
+        default:
+          result = 0;
+          break;
+      }
+
+      if (result === numberToFind) {
+        endingGame()
+      }
+
+      // create a copy of the original array
+      const numbersCopy = [...numbers];
+      console.log(numbersCopy);
+
+      // find the index of the elements to be deleted
+      const indexA = numbersCopy.findIndex((number) => number.value === selectedNumberA.value);
+
+      // remove the elements
+      numbersCopy.splice(indexA, 1);
+      const indexB = numbersCopy.findIndex((number) => number.value === selectedNumberB.value);
+      if (indexB === 0) {
+        numbersCopy.splice(indexB, 1);
+      }else{
+        numbersCopy.splice(indexB, 1);
+      }
+
+      // add the new element
+      numbersCopy.push({ value: result, column: null });
+
+      // update the state with the new array
+      this.setState({ numbers: numbersCopy });
+    }
+
+  };
+
+  // Function to reset the game
+  handleResetClick() {
+    const { numbers } = this.props;
+
+    this.setState({
+      operatorSelected: null,
+      numbers: [
+        { value: numbers[0], column: null },
+        { value: numbers[1], column: null },
+        { value: numbers[2], column: null },
+        { value: numbers[3], column: null },
+        { value: numbers[4], column: null },
+        { value: numbers[5], column: null }
+      ],
+      selectedNumberA: null,
+      selectedNumberB: null
+    });
+  };
+
+  // Function to handle adding a number to the selected numbers
+  handleNumberClick = (number, column) => {
+    const { numbers, selectedNumberB } = this.state;
+    numbers.forEach(obj => {
+      if (obj.column === column) {
+        obj.column = null
+      }
+    });
+    if (column === "A") {
+      this.setState({selectedNumberA: numbers.find(obj => obj.value === number)})
+      numbers.find(obj => obj.value === number).column = "A"
+
+    } else if (column === "B") {
+      this.setState({selectedNumberB: numbers.find(obj => obj.value === number)})
+      numbers.find(obj => obj.value === number).column = "B"
+    }
+  };
+
+  // Function to handle adding an operator
+  handleOperatorClick = (operatorSelected) => {
+    this.setState({ operatorSelected });
+  };
+
+  render() {
+    const { numbers, selectedNumberA, selectedNumberB, operatorSelected, operators } = this.state;
+
+    return (
+      <div className="columns">
+        <div className="column">
+          {numbers.map((number) => (
+           <React.Fragment>
+           {number.column === "A" &&
+             <button className="number selected">
+               {number.value}
+             </button>
+           }
+           {number.column === "B" &&
+             <button className="number alreadySelected">
+               {number.value}
+             </button>
+           }
+           {number.column === null &&
+             <button className="number " onClick={() => this.handleNumberClick(number.value, "A")}>
+               {number.value}
+             </button>
+           }
+         </React.Fragment>
+          ))}
+        </div>
+        <div className="column">
+          {operators.map((operator) => (
+            <React.Fragment>
+                {operator === operatorSelected &&
+                  <button className="operator selected">
+                    {operator}
+                  </button>
+                }
+                {operator != operatorSelected &&
+                  <button className="operator" onClick={() => this.handleOperatorClick(operator)}>
+                    {operator}
+                  </button>
+                }
+            </React.Fragment>
+            ))}
+        </div>
+        <div className="column">
+          {numbers.map((number) => (
+           <React.Fragment>
+           {number.column === "A" &&
+             <button className="number alreadySelected">
+               {number.value}
+             </button>
+           }
+           {number.column === "B" &&
+             <button className="number selected">
+               {number.value}
+             </button>
+           }
+           {number.column === null &&
+             <button className="number " onClick={() => this.handleNumberClick(number.value, "B")}>
+               {number.value}
+             </button>
+           }
+         </React.Fragment>
+          ))}
+        </div>
+        <button className="send" onClick={this.handleSendClick}>
+          Send
+        </button>
+        <button className="reset" onClick={this.handleResetClick}>
+          Reset
+        </button>
+      </div>
+    );
   }
 }
 
@@ -130,10 +333,10 @@ class Game extends React.Component {
       numberToFind: 0,
       operations: null,
       isCooldownActive: false,
-      secondsLeft: 10,
+      secondsLeft: 90,
       isNumbersGenerated: false,
       numbers: null,
-      isFound: false
+      isWin:false
     };
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this)
   }
@@ -141,7 +344,6 @@ class Game extends React.Component {
   componentDidMount() {
     generateNumberGame().then((results) => {
       this.setState({ numberToFind: results.numberToFind, operations: results.operations, isNumbersGenerated: true, numbers: results.numbers });
-      console.log(results.operations);
     }).catch((error) => {
       console.error(error);
     });
@@ -169,17 +371,20 @@ class Game extends React.Component {
   }
 
   returnToMenu() {
-    document.location.href = './chiffrePartIndex'
+    document.location.href = '../index.html'
   }
 
+  endingGame(){
+    this.setState({isCooldownActive: true,  secondsLeft: 0, isWin: true})
+  }
 
   render() {
-    const { isCooldownActive, secondsLeft, isNumbersGenerated , numberToFind, operations, isFound} = this.state;
+    const { isCooldownActive, secondsLeft, isNumbersGenerated, numbers , numberToFind, operations, isWin} = this.state;
 
     //le timer est fini
     if (isCooldownActive && secondsLeft === 0) {
       return (
-        <EndingScreen numberToFind={numberToFind} operations={operations} returnToMenu={() => this.returnToMenu()} isFound={isFound} />
+        <EndingScreen numberToFind={numberToFind} operations={operations} returnToMenu={() => this.returnToMenu()} isWin={isWin}/>
       );
     }
 
@@ -189,10 +394,12 @@ class Game extends React.Component {
         <div className="game">
           <div className="topPart">
             <ReturnButton returnToMenu={() => this.returnToMenu()}/>
+            <div className="numberToFind">{numberToFind}</div>
             <p className="chrono">{secondsLeft}</p>
           </div>
           {/* {letters && <LetterArea letters={letters} />} 
           <GuessPart letters={letters} incrementScore={(n) => this.incrementScore(n)} score={this.state.score} /> */}
+          <PlayPart numbers={numbers}  numberToFind={numberToFind} isCooldownActive={isCooldownActive} secondsLeft={secondsLeft} endingGame={() => this.endingGame()}/>
         </div>
       )
     } else {

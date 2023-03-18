@@ -1,10 +1,103 @@
+body,head{
+    margin: 0px;
+    background: #16637a;
+    overflow-x: hidden;
+}
 
-.topPart{
+#app{
+    margin: 0px;
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.play-button{
+    border-radius: 2em;
+    height: 250px;
+    width: 250px;
+}
+
+#letterPart {
+    background-color: rgba(250, 235, 215, 0.34);
+    height: 100%;
+    left: 36px;
+    top: 36px;
+    border-radius: 0px;
+    padding: 2em;
+    
     display: flex;
     flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+}
+
+.letterArea {
+    /* Letter case */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    height: 100px;
+    width: 100px;
+    gap: 10px;
+
+    font-size: 48px;
+    /* secondary color */
+
+    background: #FEBC03;
+    border: 2px solid #000000;
+}
+
+.guess-part{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}   
+
+.game{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0em 1em;
+    padding:0em 2em;
+    font-size: larger;
+    
+    min-width: 90vh;
+}
+
+#guessButton{
+    width: 40px;
+}
+
+.numberToFind{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 140px;
+    width: 140px;
+    
+    font-size: 64px;
+
+    background: #FEBC03;
+    border: 2px solid #000000;
 }
 
 .chrono{
@@ -20,11 +113,123 @@
     justify-content: center;
 }
 
-.endGameScreen{
-    font-size: 2em;
+.topPart{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.operationList{
+.returnButton{
+    height: 75px;
+    width: 75px;
+}
+
+.returnButton:hover{
+    transform: translateY(1.5px);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.endGameScreen{
+    font-size: 1.5em;
+}
+
+@media only screen and (min-width: 1500px) {
+
+    body{
+        font-size: 2em;
+    }
+
+    .letterArea {
+        /* Letter case */
+
+        box-sizing: border-box;
+
+        /* Auto layout */
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 140px;
+        width: 140px;
+        gap: 10px;
+
+        font-size: 64px;
+        /* secondary color */
+
+        background: #FEBC03;
+        border: 2px solid #000000;
+    }
+
+    .endGameScreen{
+        font-size: 2em;
+    }
+}
+
+.chargementScreen {
+    display: flex;
+    gap: 9em;
+    height: 70vh;
+    padding-right: 9em;
+}
+
+.chargementScreen > .play-button {
+    align-self: center;
+    justify-self: center;
+}
+
+.guess-form {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+form > input {
+    height: 3em;
+    width: 22em;
+    font-weight: 24px;
+    margin: 2em;
+}
+
+form > button{
+    height: 3em;
+    font-weight: bold;
+}
+
+.operationList {
     display: flex;
     flex-direction: row;
 }
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 200px;
+    border: 1px solid black;
+  }
+  
+  .column span, .column button {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid black;
+    cursor: pointer;
+  }
+  
+  .column span.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .column .selected {
+    background-color: yellow;
+  }
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+  }
