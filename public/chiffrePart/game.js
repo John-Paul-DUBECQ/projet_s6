@@ -11,7 +11,7 @@ function generateNumberGame() {
         numbers.push(number);
       }
     }
-    
+
     console.log("The numbers are:", numbers);
 
     const result = calculateResult(numbers)
@@ -40,7 +40,7 @@ function calculateResult(numbers) {
       case '+':
         result += selected[i];
         operations.push(" + ")
-        operations.push(selected[i] )
+        operations.push(selected[i])
         break;
       case '-':
         result -= selected[i];
@@ -54,7 +54,7 @@ function calculateResult(numbers) {
           operations.unshift("(")
           result *= selected[i];
           operations.push(" ) " + " * ")
-          operations.push(selected[i] )
+          operations.push(selected[i])
         }
         break;
     }
@@ -68,8 +68,8 @@ function calculateResult(numbers) {
     console.log(operations);
     console.log(result);
     return result;
-  } 
-  
+  }
+
   // if result is still not greater than 150, recurse with remaining numbers
   if (selected.length < numbers.length) {
     const remaining = numbers.filter(num => !selected.includes(num));
@@ -110,18 +110,18 @@ class EndingScreen extends React.Component {
   }
 
   render() {
-    const { isWin, numberToFind, returnToMenu , operations} = this.props
+    const { isWin, numberToFind, returnToMenu, operations } = this.props
 
     return (
-      <div>
+      <div className="endGameScreen">
         <ReturnButton returnToMenu={() => returnToMenu()} />
-        <div className="endGameScreen">
+        <div>
           <h1>Game Over!</h1>
           {isWin ?
             <p>Tu as réussi à trouver le nombre: Bravo</p> :
-            <p>Tu n'as malheureusement pas trouvé le nombre, dommage, tu feras mieux la prochaine fois</p> 
+            <p>Tu n'as malheureusement pas trouvé le nombre, dommage, tu feras mieux la prochaine fois</p>
           }
-          
+
           <p>Le nombre à trouver était: {numberToFind}</p>
           <p>Pour y arriver, il fallait faire:</p>
           <div className="operationList">
@@ -149,10 +149,10 @@ class PlayPart extends React.Component {
         { value: numbers[5], column: null }
       ],
       operatorSelected: null,
-      operators:  [
-         "+" ,
-         "-",
-         "*" 
+      operators: [
+        "+",
+        "-",
+        "*"
       ],
       selectedNumberA: null,
       selectedNumberB: null
@@ -165,7 +165,7 @@ class PlayPart extends React.Component {
   handleSendClick() {
     const { numberToFind, endingGame } = this.props;
 
-    const { selectedNumberA,selectedNumberB, operatorSelected, numbers} = this.state;
+    const { selectedNumberA, selectedNumberB, operatorSelected, numbers } = this.state;
     if (selectedNumberA && selectedNumberB && operatorSelected != null) {
       const a = selectedNumberA.value
       const b = selectedNumberB.value
@@ -201,7 +201,7 @@ class PlayPart extends React.Component {
       const indexB = numbersCopy.findIndex((number) => number.value === selectedNumberB.value);
       if (indexB === 0) {
         numbersCopy.splice(indexB, 1);
-      }else{
+      } else {
         numbersCopy.splice(indexB, 1);
       }
 
@@ -209,7 +209,7 @@ class PlayPart extends React.Component {
       numbersCopy.push({ value: result, column: null });
 
       // update the state with the new array
-      this.setState({ numbers: numbersCopy , operatorSelected: null});
+      this.setState({ numbers: numbersCopy, operatorSelected: null });
     }
 
   };
@@ -242,10 +242,10 @@ class PlayPart extends React.Component {
       }
     });
     if (column === "A") {
-      this.setState({selectedNumberA: numbers[index]})
+      this.setState({ selectedNumberA: numbers[index] })
       numbers[index].column = "A"
     } else if (column === "B") {
-      this.setState({selectedNumberB: numbers[index]})
+      this.setState({ selectedNumberB: numbers[index] })
       numbers[index].column = "B"
     }
   };
@@ -259,31 +259,35 @@ class PlayPart extends React.Component {
     const { numbers, selectedNumberA, selectedNumberB, operatorSelected, operators } = this.state;
 
     return (
-      <div className="columns">
-        <div className="column">
-          {numbers.map((number, index) => (
-           <React.Fragment>
-           {number.column === "A" &&
-             <button className="number selected">
-               {number.value}
-             </button>
-           }
-           {number.column === "B" &&
-             <button className="number alreadySelected">
-               {number.value}
-             </button>
-           }
-           {number.column === null &&
-             <button className="number " onClick={() => this.handleNumberClick(number.value, "A", index)}>
-               {number.value}
-             </button>
-           }
-         </React.Fragment>
-          ))}
-        </div>
-        <div className="column">
-          {operators.map((operator) => (
-            <React.Fragment>
+      <div className="gamePart">
+        <button className="reset" onClick={this.handleResetClick}>
+          Reset
+        </button>
+        <div className="columns">
+          <div className="column">
+            {numbers.map((number, index) => (
+              <React.Fragment>
+                {number.column === "A" &&
+                  <button className="number selected">
+                    {number.value}
+                  </button>
+                }
+                {number.column === "B" &&
+                  <button className="number alreadySelected">
+                    {number.value}
+                  </button>
+                }
+                {number.column === null &&
+                  <button className="number " onClick={() => this.handleNumberClick(number.value, "A", index)}>
+                    {number.value}
+                  </button>
+                }
+              </React.Fragment>
+            ))}
+          </div>
+          <div className="column">
+            {operators.map((operator) => (
+              <React.Fragment>
                 {operator === operatorSelected &&
                   <button className="operator selected">
                     {operator}
@@ -294,35 +298,33 @@ class PlayPart extends React.Component {
                     {operator}
                   </button>
                 }
-            </React.Fragment>
+              </React.Fragment>
             ))}
-        </div>
-        <div className="column">
-          {numbers.map((number, index) => (
-           <React.Fragment>
-           {number.column === "A" &&
-             <button className="number alreadySelected">
-               {number.value}
-             </button>
-           }
-           {number.column === "B" &&
-             <button className="number selected">
-               {number.value}
-             </button>
-           }
-           {number.column === null &&
-             <button className="number" onClick={() => this.handleNumberClick(number.value, "B", index)}>
-               {number.value}
-             </button>
-           }
-         </React.Fragment>
-          ))}
+          </div>
+          <div className="column">
+            {numbers.map((number, index) => (
+              <React.Fragment>
+                {number.column === "A" &&
+                  <button className="number alreadySelected">
+                    {number.value}
+                  </button>
+                }
+                {number.column === "B" &&
+                  <button className="number selected">
+                    {number.value}
+                  </button>
+                }
+                {number.column === null &&
+                  <button className="number" onClick={() => this.handleNumberClick(number.value, "B", index)}>
+                    {number.value}
+                  </button>
+                }
+              </React.Fragment>
+            ))}
+          </div>
         </div>
         <button className="send" onClick={this.handleSendClick}>
           Send
-        </button>
-        <button className="reset" onClick={this.handleResetClick}>
-          Reset
         </button>
       </div>
     );
@@ -339,7 +341,7 @@ class Game extends React.Component {
       secondsLeft: 90,
       isNumbersGenerated: false,
       numbers: null,
-      isWin:false
+      isWin: false
     };
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this)
   }
@@ -365,7 +367,7 @@ class Game extends React.Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-  
+
   handlePlayButtonClick() {
     //on active le cooldown quand on a déjà trouvé le mot
     if (this.state.isNumbersGenerated) {
@@ -377,32 +379,30 @@ class Game extends React.Component {
     document.location.href = '../index.html'
   }
 
-  endingGame(){
-    this.setState({isCooldownActive: true,  secondsLeft: 0, isWin: true})
+  endingGame() {
+    this.setState({ isCooldownActive: true, secondsLeft: 0, isWin: true })
   }
 
   render() {
-    const { isCooldownActive, secondsLeft, isNumbersGenerated, numbers , numberToFind, operations, isWin} = this.state;
+    const { isCooldownActive, secondsLeft, isNumbersGenerated, numbers, numberToFind, operations, isWin } = this.state;
 
     //le timer est fini
     if (isCooldownActive && secondsLeft === 0) {
       return (
-        <EndingScreen numberToFind={numberToFind} operations={operations} returnToMenu={() => this.returnToMenu()} isWin={isWin}/>
+        <EndingScreen numberToFind={numberToFind} operations={operations} returnToMenu={() => this.returnToMenu()} isWin={isWin} />
       );
     }
 
     //jeu en cours
     if (isCooldownActive) {
-      return(
+      return (
         <div className="game">
           <div className="topPart">
-            <ReturnButton returnToMenu={() => this.returnToMenu()}/>
+            <ReturnButton returnToMenu={() => this.returnToMenu()} />
             <div className="numberToFind">{numberToFind}</div>
             <p className="chrono">{secondsLeft}</p>
           </div>
-          {/* {letters && <LetterArea letters={letters} />} 
-          <GuessPart letters={letters} incrementScore={(n) => this.incrementScore(n)} score={this.state.score} /> */}
-          <PlayPart numbers={numbers}  numberToFind={numberToFind} isCooldownActive={isCooldownActive} secondsLeft={secondsLeft} endingGame={() => this.endingGame()}/>
+          <PlayPart numbers={numbers} numberToFind={numberToFind} isCooldownActive={isCooldownActive} secondsLeft={secondsLeft} endingGame={() => this.endingGame()} />
         </div>
       )
     } else {
@@ -410,7 +410,7 @@ class Game extends React.Component {
         return (
           /*Le jeu n'a pas encore commencé*/
           <div className="chargementScreen">
-            <ReturnButton returnToMenu={() => this.returnToMenu()}/>
+            <ReturnButton returnToMenu={() => this.returnToMenu()} />
             <button className="play-button" onClick={this.handlePlayButtonClick}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
                 <path fill="none" d="M0 0h24v24H0z" />
@@ -421,14 +421,14 @@ class Game extends React.Component {
         )
       } else {
         //si le nombre a cherché n'a pas encore chargé, on patiente (peu de chance d'arriver)
-        return ( 
+        return (
           <div className="chargementScreen">
-            <ReturnButton returnToMenu={() => this.returnToMenu()}/>
+            <ReturnButton returnToMenu={() => this.returnToMenu()} />
             Chargement ...
           </div>
         )
       }
-    } 
+    }
   }
 }
 

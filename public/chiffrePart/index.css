@@ -1,106 +1,62 @@
-body,head{
+body,
+head {
     margin: 0px;
     background: #16637a;
     overflow-x: hidden;
 }
 
-#app{
-    margin: 0px;
+#app {
     width: 100vw;
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
-body{
+body {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.play-button{
+.play-button {
     border-radius: 2em;
     height: 250px;
     width: 250px;
 }
 
-#letterPart {
-    background-color: rgba(250, 235, 215, 0.34);
-    height: 100%;
-    left: 36px;
-    top: 36px;
-    border-radius: 0px;
-    padding: 2em;
-    
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-}
-
-.letterArea {
-    /* Letter case */
-
-    box-sizing: border-box;
-
-    /* Auto layout */
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    width: 100px;
-    gap: 10px;
-
-    font-size: 48px;
-    /* secondary color */
-
-    background: #FEBC03;
-    border: 2px solid #000000;
-}
-
-.guess-part{
-    width: 100%;
+.game {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}   
-
-.game{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0em 1em;
-    padding:0em 2em;
+    margin: 2em;
     font-size: larger;
-    
-    min-width: 90vh;
+    gap: 2em;
+
+    width: 100%;
 }
 
-#guessButton{
-    width: 40px;
+#app:has(.chargementScreen) {
+    align-items: center;
+
 }
 
-.numberToFind{
+.numberToFind {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 140px;
     width: 140px;
-    
+
     font-size: 64px;
 
     background: #FEBC03;
     border: 2px solid #000000;
 }
 
-.chrono{
+.chrono {
     font-size: 30px;
     background-color: rgb(0, 0, 0);
     border-radius: 100%;
@@ -113,7 +69,12 @@ body{
     justify-content: center;
 }
 
-.topPart{
+.returnButton {
+    height: 75px;
+    width: 75px;
+}
+
+.topPart {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -121,51 +82,14 @@ body{
     align-items: center;
 }
 
-.returnButton{
-    height: 75px;
-    width: 75px;
-}
-
-.returnButton:hover{
+.returnButton:hover {
     transform: translateY(1.5px);
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.endGameScreen{
+.endGameScreen {
+    margin: 2em;
     font-size: 1.5em;
-}
-
-@media only screen and (min-width: 1500px) {
-
-    body{
-        font-size: 2em;
-    }
-
-    .letterArea {
-        /* Letter case */
-
-        box-sizing: border-box;
-
-        /* Auto layout */
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 140px;
-        width: 140px;
-        gap: 10px;
-
-        font-size: 64px;
-        /* secondary color */
-
-        background: #FEBC03;
-        border: 2px solid #000000;
-    }
-
-    .endGameScreen{
-        font-size: 2em;
-    }
 }
 
 .chargementScreen {
@@ -175,27 +99,9 @@ body{
     padding-right: 9em;
 }
 
-.chargementScreen > .play-button {
+.chargementScreen>.play-button {
     align-self: center;
     justify-self: center;
-}
-
-.guess-form {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-}
-
-form > input {
-    height: 3em;
-    width: 22em;
-    font-weight: 24px;
-    margin: 2em;
-}
-
-form > button{
-    height: 3em;
-    font-weight: bold;
 }
 
 .operationList {
@@ -208,28 +114,73 @@ form > button{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100px;
-    height: 200px;
-    border: 1px solid black;
-  }
-  
-  .column span, .column button {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid black;
+    gap: 1em;
+}
+
+.number,
+.operator {
+    height: 4em;
+    width: 4em;
+    font-size: 15px;
     cursor: pointer;
-  }
-  
-  .column span.disabled {
+}
+
+.alreadySelected {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-  
-  .column .selected {
-    background-color: yellow;
-  }
+}
 
-  .columns {
+.column .selected {
+    background-color: rgb(70, 188, 101);
+}
+
+
+.gamePart {
     display: flex;
     flex-direction: row;
-  }
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.columns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
+    width: 50%;
+    
+}
+
+.reset{
+    width: 150px;
+    height: 150px;
+    font-size: larger;
+    
+}
+
+.send{
+    width: 150px;
+    height: 150px;
+    font-size: larger;
+}
+
+@media only screen and (min-width: 1500px) {
+
+    body {
+        font-size: 1em;
+    }
+
+    .endGameScreen {
+        font-size: 1.5em;
+    }
+
+    .number,
+    .operator {
+        height: 4em;
+        width: 4em;
+        font-size: 25px;
+        cursor: pointer;
+    }
+}
