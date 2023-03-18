@@ -6,8 +6,8 @@ const url = "mongodb://upjv2023:4JMiQkAQp0QCsTXT@ac-z5vtdb2-shard-00-00.twdmswi.
 const app = express();
 app.use(express.static('./public'));
 
-app.get('/', function (req, res) {
-  res.send("Hello world");
+app.get('/index', function (req, res) {
+  return res.redirect('../index.html')
 })
 app.listen('8080');
 
@@ -36,9 +36,9 @@ app.get('/search', function (req, res) {
   });
 });
 
-function getRandomWordByDate(callback) {
+function getRandomWordByDate(callback, number) {
   const todayDate = new Date()
-  const randomIndex = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259) % 100169;
+  const randomIndex = (todayDate.getMonth() * todayDate.getDate() * 445447 * todayDate.getFullYear() * 1259 * number) % 100169;
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
     const collection = db.collection('words');
@@ -46,10 +46,11 @@ function getRandomWordByDate(callback) {
       if (err) {
         callback(err, null);
       } else {
-        if (result[0].word.length >= 7) { // vérifier la longueur du mot ici
+        if (result[0].word.length >= 7 && result[0].word.length <=12) { // vérifier la longueur du mot ici
           callback(null, result[0].word);
         } else {
-          getRandomWord(callback);
+          //on cherche un autre mot au hasard mais ce sera le même pour tous
+          getRandomWordByDate(callback, number + 567);
         }
       }
     });
@@ -62,10 +63,9 @@ app.get('/getRandomWordByDate', (req, res) => {
       console.log(err);
       res.sendStatus(500);
     } else {
-      console.log(word);
       res.json(word);
     }
-  });
+  }, 1);
 });
 
 
@@ -80,7 +80,7 @@ function getRandomWord(callback) {
         if (err) {
           callback(err, null);
         } else {
-          if (result[0].word.length >= 7 && result[0].word.length <= 10) { // vérifier la longueur du mot ici
+          if (result[0].word.length >= 7 && result[0].word.length <= 12) { // vérifier la longueur du mot ici
             callback(null, result[0].word);
           } else {
             getRandomWord(callback);
@@ -96,7 +96,6 @@ app.get('/getRandomWord', (req, res) => {
       console.log(err);
       res.sendStatus(500);
     } else {
-      console.log(word);
       res.json(word);
     }
   });

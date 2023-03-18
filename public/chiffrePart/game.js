@@ -48,10 +48,14 @@ function calculateResult(numbers) {
         operations.push(selected[i])
         break;
       case '*':
-        operations.unshift("(")
-        result *= selected[i];
-        operations.push(" ) " + " * ")
-        operations.push(selected[i] )
+        if (selected[i] === 1) {
+          result *= selected[i];
+        } else {
+          operations.unshift("(")
+          result *= selected[i];
+          operations.push(" ) " + " * ")
+          operations.push(selected[i] )
+        }
         break;
     }
   }
@@ -205,7 +209,7 @@ class PlayPart extends React.Component {
       numbersCopy.push({ value: result, column: null });
 
       // update the state with the new array
-      this.setState({ numbers: numbersCopy });
+      this.setState({ numbers: numbersCopy , operatorSelected: null});
     }
 
   };
@@ -230,20 +234,19 @@ class PlayPart extends React.Component {
   };
 
   // Function to handle adding a number to the selected numbers
-  handleNumberClick = (number, column) => {
-    const { numbers, selectedNumberB } = this.state;
+  handleNumberClick = (number, column, index) => {
+    const { numbers } = this.state;
     numbers.forEach(obj => {
       if (obj.column === column) {
         obj.column = null
       }
     });
     if (column === "A") {
-      this.setState({selectedNumberA: numbers.find(obj => obj.value === number)})
-      numbers.find(obj => obj.value === number).column = "A"
-
+      this.setState({selectedNumberA: numbers[index]})
+      numbers[index].column = "A"
     } else if (column === "B") {
-      this.setState({selectedNumberB: numbers.find(obj => obj.value === number)})
-      numbers.find(obj => obj.value === number).column = "B"
+      this.setState({selectedNumberB: numbers[index]})
+      numbers[index].column = "B"
     }
   };
 
@@ -258,7 +261,7 @@ class PlayPart extends React.Component {
     return (
       <div className="columns">
         <div className="column">
-          {numbers.map((number) => (
+          {numbers.map((number, index) => (
            <React.Fragment>
            {number.column === "A" &&
              <button className="number selected">
@@ -271,7 +274,7 @@ class PlayPart extends React.Component {
              </button>
            }
            {number.column === null &&
-             <button className="number " onClick={() => this.handleNumberClick(number.value, "A")}>
+             <button className="number " onClick={() => this.handleNumberClick(number.value, "A", index)}>
                {number.value}
              </button>
            }
@@ -295,7 +298,7 @@ class PlayPart extends React.Component {
             ))}
         </div>
         <div className="column">
-          {numbers.map((number) => (
+          {numbers.map((number, index) => (
            <React.Fragment>
            {number.column === "A" &&
              <button className="number alreadySelected">
@@ -308,7 +311,7 @@ class PlayPart extends React.Component {
              </button>
            }
            {number.column === null &&
-             <button className="number " onClick={() => this.handleNumberClick(number.value, "B")}>
+             <button className="number" onClick={() => this.handleNumberClick(number.value, "B", index)}>
                {number.value}
              </button>
            }

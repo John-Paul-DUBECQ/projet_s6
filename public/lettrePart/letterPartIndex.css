@@ -1,20 +1,34 @@
-body{
-    background-color: rgb(12, 43, 70);
+body {
+    background-color: rgb(15, 61, 101);
 }
 
-#app{
+#app {
     overflow-x: hidden;
 
 }
 
-.blocks{
-    background-color: rgb(12, 43, 70);
+.returnButton{
+    height: 75px;
+    width: 75px;
+}
+
+.blocks {
     margin: 4vh 0 0 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     justify-items: center;
     grid-gap: 4vh;
 }
+
+a {
+    height: 40vh;
+    width: 40vh;
+    text-decoration: none;
+    color: black;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;}
 
 .block {
     height: 40vh;
@@ -26,42 +40,45 @@ body{
     align-items: center;
     justify-content: center;
     text-align: center;
+
+    transition: transform 0.3s ease-in-out;
+    background-color: #00BFFF;
 }
 
-.normalBlock{
-    background-color: rgb(79, 79, 193);
-    font-size: 30px;
-
+.block:hover {
+    color: rgb(255, 255, 255);
+    background-color: #0b0c325b;
 }
 
-.block:hover{
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+.insideBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1em;
+
+    width: 85%;
+    height: 100%;
 }
 
-.reverseBlock{
-    background-color: rgb(255, 255, 255);
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    border: 20px solid rgb(6, 6, 80);
-    margin: 10px;
-
-    color:  #480429;
-
-}
-
-a{
-    text-decoration: none; 
-    color: #000000;
+.insideBlock :first-child {
+    font-size: 2em;
 }
 
 .blockTop {
+    height: 40vh;
+    width: 40vh;
+    font-size: 1.5em;
+
     background-color: #0000002a;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: flex-start;
     overflow-y: auto;
     padding: 1em;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 
 .ligne {
@@ -71,34 +88,37 @@ a{
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    border-top: #000000 solid 2px ;
+    border-top: #000000 solid 2px;
     color: rgba(250, 235, 215, 0.818);
 
 }
 
-.ligne > div {
+.ligne>div {
     width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.firstline{    
+.firstline {
     min-height: 33px;
 
-    color: antiquewhite;
+    color: rgb(255, 255, 255);
 
     font-weight: bolder;
-    border:none;
+    border: none;
 }
 
 ::-webkit-scrollbar {
     width: 12px;
 }
- 
+
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
 }
- 
+
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }

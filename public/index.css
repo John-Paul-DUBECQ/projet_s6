@@ -1,4 +1,4 @@
-body{
+body {
     margin: 0;
 }
 
@@ -9,9 +9,9 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  }
-  
-  .part {
+}
+
+.part {
     height: 50%;
     width: 100%;
     display: flex;
@@ -19,19 +19,19 @@ body{
     justify-content: center;
     font-size: 2em;
     transition: all 1s;
-  }
-  
-  .part:hover {
+}
+
+.part:hover {
     filter: brightness(80%);
     font-size: 2.2em;
     height: 160%;
     cursor: pointer;
-  }
-  
-  .topPart {
+}
+
+.topPart {
     background-color: rgb(349, 12, 23);
-  }
-  
-  .bottomPart {
+}
+
+.bottomPart {
     background-color: rgb(01, 145, 350);
-  }
+}
