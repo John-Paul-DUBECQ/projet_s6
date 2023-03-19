@@ -40,10 +40,10 @@ function containsLetters(word, letters) {
     return true;
 }
 //on crée le tableau de lettre
-function createArrayLetters(updateRandomWord) {
+function createArrayLetters() {
     return new Promise((resolve, reject) => {
         var quota = 0
-
+        let letters = new Array()
         //permet d'avoir au moins 3 voyelles
         while (quota != 2) {
             const c = getRandomInt(0, 26)
