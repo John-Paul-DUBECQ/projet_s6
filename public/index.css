@@ -1,36 +1,32 @@
 body {
     margin: 0;
+    background-color: rgb(15, 61, 101);
 }
 
 #loginPage {
     height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
 }
 
 .part {
-    height: 50%;
-    width: 100%;
+    background-color: #7bb6ca;
+    height: 80%;
+    width: 35%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2em;
-    transition: all 1s;
+    font-size: 4em;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .part:hover {
-    filter: brightness(80%);
-    font-size: 2.2em;
-    height: 160%;
+    transition: 0.5s;
+    color: rgb(255, 255, 255);
+    background-color: #0b0c325b;
+    font-size: 6em;
     cursor: pointer;
 }
 
-.topPart {
-    background-color: rgb(349, 12, 23);
-}
-
-.bottomPart {
-    background-color: rgb(01, 145, 350);
-}
