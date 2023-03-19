@@ -107,8 +107,8 @@ class GuessPart extends React.Component {
         event.preventDefault();
         const word = this.state.inputText.trim();
         isWord(word).then((result) => {
-            if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word)) {
-                this.setState((prevState) => ({ words: [word, ...prevState.words], inputText: '' }));
+            if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word.toLowerCase())) {
+                this.setState((prevState) => ({ words: [word.toLowerCase(), ...prevState.words], inputText: '' }));
                 incrementScore(word.length)
             } else {
                 console.log('Mot invalide.');

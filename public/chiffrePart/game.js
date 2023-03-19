@@ -110,7 +110,7 @@ class EndingScreen extends React.Component {
                }
 
                <p>Le nombre à trouver était: {numberToFind}</p>
-               <p>Pour y arriver, il fallait faire:</p>
+               <p>Pour y arriver, on pouvait faire:</p>
                <div className="operationList">
                   {
                      operations.map((elem) => <p>{elem.toString()}</p>)
@@ -162,7 +162,11 @@ class PlayPart extends React.Component {
                result = a + b;
                break;
             case "-":
-               result = a - b;
+               if ((a - b) > 0) {
+                  result = a - b;
+               }else {
+                  result = b - a;
+               }
                break;
             case "*":
                result = a * b;

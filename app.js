@@ -18,8 +18,9 @@ app.get('/search', function (req, res) {
   MongoClient.connect(url, function (err, client) {
     const db = client.db('dictionary');
     const collection = db.collection('words');
+    const wordUpperCase = req.query.word.toLowerCase()
     collection.aggregate([
-      { $match: { word: req.query.word } },
+      { $match: { word: wordUpperCase } },
     ]).toArray(function (err, results) {
       if (err) throw err;
       res.send(results);

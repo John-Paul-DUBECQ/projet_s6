@@ -118,8 +118,8 @@ class GuessPart extends React.Component {
         event.preventDefault();
         const word = this.state.inputText.trim();
         isWord(word).then((result) => {
-            if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word)) {
-                this.setState((prevState) => ({ words: [word, ...prevState.words], inputText: '' }));
+            if (result && word !== '' && containsLetters(word, letters) && !this.state.words.includes(word.toLowerCase())) {
+                this.setState((prevState) => ({ words: [word.toLowerCase(), ...prevState.words], inputText: '' }));
                 incrementScore(word.length)
             } else {
                 console.log('Mot invalide.');
@@ -239,7 +239,7 @@ class Game extends React.Component {
             dailyWord: "",
             score: 0,
             isCooldownActive: false,//on change quand on acive le cooldown
-            secondsLeft: 60,
+            secondsLeft: 90,
             letters: null,//liste des lettres
             isFound: false//avons-nous trouvé le mot dans la db
         };
