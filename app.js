@@ -2,7 +2,7 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 require('dotenv').config();
 const url = process.env.MONGO_URI
-
+//SALUT
 const app = express();
 app.use(express.static('./public'));
 
