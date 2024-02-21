@@ -10,6 +10,7 @@ app.get('/index', function (req, res) {
   return res.redirect('../index.html')
 })
 app.listen('8080');
+console.log("serveur lancé sur http://localhost:8080/");
 
 
 app.use(express.urlencoded({ extended: true }));

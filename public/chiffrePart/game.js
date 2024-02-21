@@ -128,12 +128,12 @@ class PlayPart extends React.Component {
       const { numbers } = this.props;
       this.state = {
          numbers: [
-            { value: numbers[0], column: null },
-            { value: numbers[1], column: null },
-            { value: numbers[2], column: null },
-            { value: numbers[3], column: null },
-            { value: numbers[4], column: null },
-            { value: numbers[5], column: null }
+            numbers[0],
+            numbers[1],
+            numbers[2],
+            numbers[3],
+            numbers[4],
+            numbers[5]
          ],
          operatorSelected: null,
          operators: [
@@ -141,8 +141,8 @@ class PlayPart extends React.Component {
             "-",
             "*"
          ],
-         selectedNumberA: null,
-         selectedNumberB: null
+         selectedNumber1: null,
+         selectedNumber2: null
       }
       this.handleSendClick = this.handleSendClick.bind(this);
       this.handleResetClick = this.handleResetClick.bind(this);
@@ -152,10 +152,10 @@ class PlayPart extends React.Component {
    handleSendClick() {
       const { numberToFind, endingGame } = this.props;
 
-      const { selectedNumberA, selectedNumberB, operatorSelected, numbers } = this.state;
-      if (selectedNumberA && selectedNumberB && operatorSelected != null) {
-         const a = selectedNumberA.value
-         const b = selectedNumberB.value
+      const { selectedNumber1, selectedNumber2, operatorSelected, numbers } = this.state;
+      if (selectedNumber1 && selectedNumber2 && operatorSelected != null) {
+         const a = selectedNumber1
+         const b = selectedNumber2
          let result;
          switch (operatorSelected) {
             case "+":
@@ -176,18 +176,20 @@ class PlayPart extends React.Component {
                break;
          }
 
+         console.log(result);
+
          if (result === numberToFind) {
             endingGame()
          }
          //on crée un nouveau tableau où on enlève les deux éléments et on ajoute le nouveau
          const numbersCopy = [...numbers];
-         const indexA = numbersCopy.findIndex((number) => number.value === selectedNumberA.value);
+         const indexA = numbersCopy.findIndex((number) => number === selectedNumber1);
          numbersCopy.splice(indexA, 1);
-         const indexB = numbersCopy.findIndex((number) => number.value === selectedNumberB.value);
+         const indexB = numbersCopy.findIndex((number) => number === selectedNumber2);
          numbersCopy.splice(indexB, 1);
 
-         numbersCopy.push({ value: result, column: null });
-
+         numbersCopy.push(result);
+console.log(numbersCopy);
          // update le tableau dans le state
          this.setState({ numbers: numbersCopy, operatorSelected: null });
       }
@@ -201,32 +203,29 @@ class PlayPart extends React.Component {
       this.setState({
          operatorSelected: null,
          numbers: [
-            { value: numbers[0], column: null },
-            { value: numbers[1], column: null },
-            { value: numbers[2], column: null },
-            { value: numbers[3], column: null },
-            { value: numbers[4], column: null },
-            { value: numbers[5], column: null }
+            numbers[0],
+            numbers[1],
+            numbers[2],
+            numbers[3],
+            numbers[4],
+            numbers[5]
          ],
-         selectedNumberA: null,
-         selectedNumberB: null
+         selectedNumber1: null,
+         selectedNumber2: null
       });
    };
 
    // on clique sur une case (nombre)
-   handleNumberClick = (number, column, index) => {
-      const { numbers } = this.state;
-      numbers.forEach(obj => {
-         if (obj.column === column) {
-            obj.column = null
-         }
-      });
-      if (column === "A") {
-         this.setState({ selectedNumberA: numbers[index] })
-         numbers[index].column = "A"
-      } else if (column === "B") {
-         this.setState({ selectedNumberB: numbers[index] })
-         numbers[index].column = "B"
+   handleNumberClick = (number, index) => {
+      const {  selectedNumber1, selectedNumber2 } = this.state;
+
+      if (!selectedNumber1 && !selectedNumber2) {
+         this.setState({ selectedNumber1: number })
+      } else if (selectedNumber1 && !selectedNumber2) {
+         this.setState({ selectedNumber2: number })
+      } else {
+         this.setState({ selectedNumber1: selectedNumber2 })
+         this.setState({ selectedNumber2: number })
       }
    };
 
@@ -236,7 +235,7 @@ class PlayPart extends React.Component {
    };
 
    render() {
-      const { numbers, selectedNumberA, selectedNumberB, operatorSelected, operators } = this.state;
+      const { numbers, selectedNumber1, selectedNumber2, operatorSelected, operators } = this.state;
 
       return (
          <div className="gamePart">
@@ -247,20 +246,16 @@ class PlayPart extends React.Component {
                <div className="column">
                   {numbers.map((number, index) => (
                      <React.Fragment>
-                        {number.column === "A" &&
-                           <button className="number selected">
-                              {number.value}
-                           </button>
+                        
+                        {(number === selectedNumber1 || number === selectedNumber2) &&
+                           <button className="number selected" onClick={() => this.handleNumberClick(number)}>
+                           {number}
+                        </button>
                         }
-                        {number.column === "B" &&
-                           <button className="number alreadySelected">
-                              {number.value}
-                           </button>
-                        }
-                        {number.column === null &&
-                           <button className="number " onClick={() => this.handleNumberClick(number.value, "A", index)}>
-                              {number.value}
-                           </button>
+                        {(number != selectedNumber1 && number != selectedNumber2) &&
+                           <button className="number" onClick={() => this.handleNumberClick(number)}>
+                           {number}
+                        </button>
                         }
                      </React.Fragment>
                   ))}
@@ -276,27 +271,6 @@ class PlayPart extends React.Component {
                         {operator != operatorSelected &&
                            <button className="operator" onClick={() => this.handleOperatorClick(operator)}>
                               {operator}
-                           </button>
-                        }
-                     </React.Fragment>
-                  ))}
-               </div>
-               <div className="column">
-                  {numbers.map((number, index) => (
-                     <React.Fragment>
-                        {number.column === "A" &&
-                           <button className="number alreadySelected">
-                              {number.value}
-                           </button>
-                        }
-                        {number.column === "B" &&
-                           <button className="number selected">
-                              {number.value}
-                           </button>
-                        }
-                        {number.column === null &&
-                           <button className="number" onClick={() => this.handleNumberClick(number.value, "B", index)}>
-                              {number.value}
                            </button>
                         }
                      </React.Fragment>
