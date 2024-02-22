@@ -21,8 +21,6 @@ ou
 http://localhost:8080/index
 
 
-https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg
-
 Merci d'avoir téléchargé mon projet, si vous avez des suggestions, n'hésitez pas à me contacter à l'adresse suivante :
 johnpaul.dubecq@hotmail.fr
 

@@ -10,20 +10,8 @@ app.get('/index', function (req, res) {
   return res.redirect('../index.html')
 });
 
-// Exporter une fonction pour Netlify Functions
-exports.handler = async (event, context, callback) => {
-  // Votre logique existante ici
-  
-  // Par exemple, renvoyer une réponse
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({ message: 'Hello World' }),
-  };
-
-  // Appeler le callback pour terminer la fonction
-  callback(null, response);
-};
-
+app.listen('8080');
+console.log("serveur lancé sur http://localhost:8080/");
 
 app.use(express.urlencoded({ extended: true }));
 //savoir si un mot est dans le dico
