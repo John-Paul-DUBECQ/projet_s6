@@ -8,9 +8,21 @@ app.use(express.static('./public'));
 
 app.get('/index', function (req, res) {
   return res.redirect('../index.html')
-})
-app.listen('8080');
-console.log("serveur lancé sur http://localhost:8080/");
+});
+
+// Exporter une fonction pour Netlify Functions
+exports.handler = async (event, context, callback) => {
+  // Votre logique existante ici
+  
+  // Par exemple, renvoyer une réponse
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({ message: 'Hello World' }),
+  };
+
+  // Appeler le callback pour terminer la fonction
+  callback(null, response);
+};
 
 
 app.use(express.urlencoded({ extended: true }));
