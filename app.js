@@ -17,7 +17,7 @@ router.get('/index', function(req, res) {
 });
 
 // Route pour les fonctions Netlify
-app.use('/.netlify/functions/app', router);
+app.use('./netlify/functions/api.ts', router);
 
 // Route pour votre application principale
 app.use('/', router);
