@@ -1,28 +1,29 @@
 const express = require('express');
+const serverless = require('serverless-http');
 const MongoClient = require('mongodb').MongoClient;
 require('dotenv').config();
-const url = process.env.MONGO_URI
+const url = process.env.MONGO_URI;
 
 const app = express();
+const router = express.Router();
+
 app.use(express.static('./public'));
 
-app.get('/index', function (req, res) {
-  return res.redirect('../index.html')
+router.get('/hello', (req, res) => res.send('Hello World!'));
+
+// Autres routes de votre application
+router.get('/index', function(req, res) {
+  return res.redirect('../index.html');
 });
 
-// Exporter une fonction pour Netlify Functions
-exports.handler = async (event, context, callback) => {
-  // Votre logique existante ici
-  
-  // Par exemple, renvoyer une réponse
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({ message: 'Hello World' }),
-  };
+// Route pour les fonctions Netlify
+app.use('/.netlify/functions/app', router);
 
-  // Appeler le callback pour terminer la fonction
-  callback(null, response);
-};
+// Route pour votre application principale
+app.use('/', router);
+
+// Exporter une fonction pour Netlify Functions
+exports.handler = serverless(app);
 
 
 app.use(express.urlencoded({ extended: true }));
